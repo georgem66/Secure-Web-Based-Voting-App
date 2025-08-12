@@ -4,7 +4,7 @@ import { logger, securityLogger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class VotingController {
-  // Get all active candidates
+
   static async getCandidates(req, res, next) {
     try {
       const candidates = await database.query(
@@ -26,15 +26,13 @@ export class VotingController {
     }
   }
 
-  // Cast a vote with blockchain-style encryption
   static async castVote(req, res, next) {
     try {
       const { candidateId } = req.body;
       const userId = req.user.id;
 
-      // Start transaction
       const result = await database.transaction(async (client) => {
-        // Double-check that candidate exists and is active
+
         const candidate = await client.query(
           'SELECT id, name FROM candidates WHERE id = $1 AND is_active = true',
           [candidateId]
@@ -44,7 +42,6 @@ export class VotingController {
           throw new Error('Invalid candidate selected');
         }
 
-        // Get the current election (assuming there's only one active election)
         const election = await client.query(
           'SELECT id FROM elections WHERE is_active = true AND start_date <= NOW() AND end_date > NOW()',
           []
@@ -56,7 +53,6 @@ export class VotingController {
 
         const electionId = election.rows[0].id;
 
-        // Get the last vote for blockchain chaining
         const lastVote = await client.query(
           'SELECT transaction_hash, block_index FROM votes ORDER BY block_index DESC LIMIT 1',
           []
@@ -70,7 +66,6 @@ export class VotingController {
           ? lastVote.rows[0].block_index + 1 
           : 1;
 
-        // Create vote data
         const timestamp = new Date();
         const nonce = encryptionService.generateSecureToken(16);
         
@@ -82,10 +77,8 @@ export class VotingController {
           nonce
         };
 
-        // Encrypt the vote
         const encryptedVote = encryptionService.encryptVote(voteData);
 
-        // Generate transaction hash (blockchain-style)
         const transactionHash = encryptionService.generateHash(
           {
             userId: encryptionService.hashData(userId), // Hash user ID for privacy
@@ -96,7 +89,6 @@ export class VotingController {
           previousHash
         );
 
-        // Store the vote
         const voteResult = await client.query(
           `INSERT INTO votes (user_id, candidate_id, election_id, encrypted_vote, 
                              transaction_hash, previous_hash, block_index, nonce, timestamp)
@@ -115,7 +107,6 @@ export class VotingController {
           ]
         );
 
-        // Log the voting event
         await client.query(
           `INSERT INTO audit_logs (user_id, action, resource, resource_id, ip_address, user_agent, details)
            VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -144,7 +135,6 @@ export class VotingController {
         };
       });
 
-      // Log security event
       securityLogger.info('Vote cast successfully', {
         userId,
         candidateId,
@@ -187,13 +177,11 @@ export class VotingController {
     }
   }
 
-  // Verify a vote transaction
   static async verifyVote(req, res, next) {
     try {
       const { transactionHash } = req.params;
       const userId = req.user.id;
 
-      // Get vote by transaction hash (only allow users to verify their own votes)
       const vote = await database.query(
         `SELECT v.id, v.transaction_hash, v.previous_hash, v.block_index, v.timestamp,
                 c.name as candidate_name, c.party,
@@ -213,7 +201,6 @@ export class VotingController {
 
       const voteData = vote.rows[0];
 
-      // Verify the hash chain integrity
       const isValid = await this.verifyBlockchainIntegrity(transactionHash);
 
       res.json({
@@ -235,12 +222,10 @@ export class VotingController {
     }
   }
 
-  // Get user's voting status
   static async getVotingStatus(req, res, next) {
     try {
       const userId = req.user.id;
 
-      // Check if user has voted
       const vote = await database.query(
         `SELECT v.id, v.transaction_hash, v.timestamp, c.name as candidate_name
          FROM votes v
@@ -249,7 +234,6 @@ export class VotingController {
         [userId]
       );
 
-      // Get current election info
       const election = await database.query(
         'SELECT id, title, description, start_date, end_date FROM elections WHERE is_active = true',
         []
@@ -282,10 +266,9 @@ export class VotingController {
     }
   }
 
-  // Verify blockchain integrity (helper method)
   static async verifyBlockchainIntegrity(transactionHash) {
     try {
-      // Get the vote and its chain
+
       const voteResult = await database.query(
         'SELECT transaction_hash, previous_hash, block_index FROM votes WHERE transaction_hash = $1',
         [transactionHash]
@@ -297,12 +280,10 @@ export class VotingController {
 
       const vote = voteResult.rows[0];
 
-      // If this is the first vote (genesis)
       if (vote.block_index === 1) {
         return vote.previous_hash === '0000000000000000000000000000000000000000000000000000000000000000';
       }
 
-      // Get the previous vote
       const previousVote = await database.query(
         'SELECT transaction_hash FROM votes WHERE block_index = $1',
         [vote.block_index - 1]
@@ -312,7 +293,6 @@ export class VotingController {
         return false;
       }
 
-      // Verify the chain link
       return vote.previous_hash === previousVote.rows[0].transaction_hash;
     } catch (error) {
       logger.error('Error verifying blockchain integrity:', error);

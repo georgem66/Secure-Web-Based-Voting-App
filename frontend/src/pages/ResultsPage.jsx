@@ -42,8 +42,7 @@ const ResultsPage = () => {
   useEffect(() => {
     fetchResults();
     fetchStatistics();
-    
-    // Auto-refresh every 30 seconds
+
     const interval = setInterval(() => {
       fetchResults(true);
       fetchStatistics(true);
@@ -96,7 +95,6 @@ const ResultsPage = () => {
   const totalVotes = results?.totalVotes || 0;
   const winner = candidates.length > 0 ? candidates.reduce((prev, current) => (prev.votes > current.votes) ? prev : current) : null;
 
-  // Prepare chart data
   const chartData = candidates.map(candidate => ({
     name: candidate.name,
     votes: candidate.votes,
@@ -111,7 +109,7 @@ const ResultsPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Header */}
+      {}
       <Paper elevation={3} sx={{ p: 3, mb: 4, bgcolor: 'secondary.main', color: 'white' }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap">
           <Box display="flex" alignItems="center">
@@ -137,7 +135,7 @@ const ResultsPage = () => {
           </Button>
         </Box>
 
-        {/* Security Indicators */}
+        {}
         <Box display="flex" gap={1} flexWrap="wrap" mt={2}>
           <Chip 
             icon={<Security />} 
@@ -160,7 +158,7 @@ const ResultsPage = () => {
         </Box>
       </Paper>
 
-      {/* Statistics Cards */}
+      {}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
           <Card elevation={2}>
@@ -219,7 +217,7 @@ const ResultsPage = () => {
         </Grid>
       </Grid>
 
-      {/* Winner Announcement */}
+      {}
       {winner && totalVotes > 0 && (
         <Alert severity="success" sx={{ mb: 4 }}>
           <Box display="flex" alignItems="center">
@@ -240,10 +238,10 @@ const ResultsPage = () => {
         </Alert>
       )}
 
-      {/* Results Charts */}
+      {}
       {totalVotes > 0 && (
         <Grid container spacing={4}>
-          {/* Bar Chart */}
+          {}
           <Grid item xs={12} lg={8}>
             <Paper elevation={3} sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
@@ -272,7 +270,7 @@ const ResultsPage = () => {
             </Paper>
           </Grid>
 
-          {/* Pie Chart */}
+          {}
           <Grid item xs={12} lg={4}>
             <Paper elevation={3} sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
@@ -303,7 +301,7 @@ const ResultsPage = () => {
         </Grid>
       )}
 
-      {/* Detailed Results Table */}
+      {}
       <Paper elevation={3} sx={{ mt: 4, p: 3 }}>
         <Typography variant="h6" gutterBottom>
           Detailed Results
@@ -362,7 +360,7 @@ const ResultsPage = () => {
         ))}
       </Paper>
 
-      {/* Footer */}
+      {}
       <Box sx={{ mt: 4, p: 3, textAlign: 'center', bgcolor: 'grey.50', borderRadius: 2 }}>
         <Typography variant="body2" color="text.secondary">
           Results are updated in real-time and verified using blockchain technology.

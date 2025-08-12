@@ -2,10 +2,8 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
-// Auth context
 const AuthContext = createContext();
 
-// Auth actions
 const authActions = {
   SET_LOADING: 'SET_LOADING',
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
@@ -16,7 +14,6 @@ const authActions = {
   CLEAR_ERROR: 'CLEAR_ERROR',
 };
 
-// Initial state
 const initialState = {
   user: null,
   isAuthenticated: false,
@@ -25,7 +22,6 @@ const initialState = {
   mfaRequired: false,
 };
 
-// Auth reducer
 const authReducer = (state, action) => {
   switch (action.type) {
     case authActions.SET_LOADING:
@@ -76,11 +72,9 @@ const authReducer = (state, action) => {
   }
 };
 
-// Auth provider component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Check for existing auth on mount
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -91,14 +85,14 @@ export const AuthProvider = ({ children }) => {
 
     if (token && user) {
       try {
-        // Verify token is still valid by fetching profile
+
         const response = await authAPI.getProfile();
         dispatch({
           type: authActions.SET_USER,
           payload: response.data.data.user,
         });
       } catch (error) {
-        // Token is invalid, clear auth
+
         logout();
       }
     } else {
@@ -122,7 +116,6 @@ export const AuthProvider = ({ children }) => {
         return { requiresMFA: true };
       }
 
-      // Store tokens and user data
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('csrfToken', data.csrfToken);
@@ -157,7 +150,6 @@ export const AuthProvider = ({ children }) => {
 
       const { data } = response.data;
 
-      // Store tokens and user data
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('csrfToken', data.csrfToken);
@@ -207,7 +199,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear local storage
+
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('csrfToken');
@@ -257,7 +249,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

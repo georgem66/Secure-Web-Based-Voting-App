@@ -12,7 +12,6 @@ import { auditLogger } from './middleware/auditLogger.js';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.js';
 
-// Import routes
 import authRoutes from './routes/auth.js';
 import votingRoutes from './routes/voting.js';
 import adminRoutes from './routes/admin.js';
@@ -20,10 +19,8 @@ import resultsRoutes from './routes/results.js';
 
 const app = express();
 
-// Trust proxy for proper IP handling
 app.set('trust proxy', 1);
 
-// Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -41,7 +38,6 @@ app.use(helmet({
   },
 }));
 
-// Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
@@ -51,7 +47,6 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Stricter rate limiting for auth endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // Limit each IP to 5 auth requests per windowMs
@@ -59,7 +54,6 @@ const authLimiter = rateLimit({
 });
 app.use('/api/auth', authLimiter);
 
-// CORS configuration
 app.use(cors({
   origin: config.FRONTEND_URL,
   credentials: true,
@@ -71,16 +65,12 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// Custom security middleware
 app.use(securityMiddleware);
 
-// Audit logging
 app.use(auditLogger);
 
-// API documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'healthy', 
@@ -89,16 +79,13 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/voting', votingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/results', resultsRoutes);
 
-// Error handling
 app.use(errorHandler);
 
-// 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });

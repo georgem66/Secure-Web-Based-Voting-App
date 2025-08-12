@@ -28,7 +28,6 @@ import * as yup from 'yup';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Validation schemas
 const loginSchema = yup.object({
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().required('Password is required'),
@@ -123,7 +122,7 @@ const LoginPage = () => {
           )}
 
           {!mfaRequired ? (
-            // Login form
+
             <Box component="form" onSubmit={loginForm.handleSubmit(handleLogin)}>
               <TextField
                 {...loginForm.register('email')}
@@ -184,7 +183,7 @@ const LoginPage = () => {
               </Button>
             </Box>
           ) : (
-            // MFA form
+
             <Box component="form" onSubmit={mfaForm.handleSubmit(handleMFALogin)}>
               <Alert severity="info" sx={{ mb: 2 }}>
                 Please enter the 6-digit code from your authenticator app.

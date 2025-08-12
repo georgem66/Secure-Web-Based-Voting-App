@@ -1,6 +1,5 @@
 import { logger, securityLogger } from '../utils/logger.js';
 
-// CSRF protection middleware
 export const csrfProtection = (req, res, next) => {
   if (req.method === 'GET') {
     return next();
@@ -26,7 +25,6 @@ export const csrfProtection = (req, res, next) => {
   next();
 };
 
-// Input sanitization middleware
 export const sanitizeInput = (req, res, next) => {
   const sanitizeObject = (obj) => {
     if (typeof obj !== 'object' || obj === null) {
@@ -36,7 +34,7 @@ export const sanitizeInput = (req, res, next) => {
     const sanitized = {};
     for (const [key, value] of Object.entries(obj)) {
       if (typeof value === 'string') {
-        // Basic XSS prevention
+
         sanitized[key] = value
           .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
           .replace(/javascript:/gi, '')
@@ -58,7 +56,6 @@ export const sanitizeInput = (req, res, next) => {
   next();
 };
 
-// SQL injection prevention (additional layer)
 export const sqlInjectionProtection = (req, res, next) => {
   const checkForSqlInjection = (value) => {
     if (typeof value !== 'string') return false;
@@ -102,11 +99,9 @@ export const sqlInjectionProtection = (req, res, next) => {
   next();
 };
 
-// IP-based security checks
 export const ipSecurityCheck = (req, res, next) => {
   const clientIp = req.ip;
-  
-  // Check for suspicious IP patterns
+
   const suspiciousIps = process.env.BLOCKED_IPS?.split(',') || [];
   
   if (suspiciousIps.includes(clientIp)) {
@@ -125,7 +120,6 @@ export const ipSecurityCheck = (req, res, next) => {
   next();
 };
 
-// Combined security middleware
 export const securityMiddleware = [
   sanitizeInput,
   sqlInjectionProtection,

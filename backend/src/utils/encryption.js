@@ -8,7 +8,6 @@ class EncryptionService {
     this.rsaKeyPair = new NodeRSA({ b: config.RSA_KEY_SIZE });
   }
 
-  // Generate RSA key pair for end-to-end encryption
   generateRSAKeyPair() {
     const key = new NodeRSA({ b: config.RSA_KEY_SIZE });
     return {
@@ -17,7 +16,6 @@ class EncryptionService {
     };
   }
 
-  // AES-256-GCM encryption for vote data
   encryptVote(voteData) {
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipher(config.VOTE_ENCRYPTION_ALGORITHM, this.aesKey);
@@ -35,7 +33,6 @@ class EncryptionService {
     };
   }
 
-  // AES-256-GCM decryption for vote data
   decryptVote(encryptedData) {
     const { encrypted, iv, authTag } = encryptedData;
     
@@ -49,37 +46,31 @@ class EncryptionService {
     return JSON.parse(decrypted);
   }
 
-  // RSA encryption for session key exchange
   rsaEncrypt(data, publicKey) {
     const key = new NodeRSA(publicKey);
     return key.encrypt(data, 'base64');
   }
 
-  // RSA decryption
   rsaDecrypt(encryptedData, privateKey) {
     const key = new NodeRSA(privateKey);
     return key.decrypt(encryptedData, 'utf8');
   }
 
-  // Generate secure hash for blockchain-style ledger
   generateHash(data, previousHash) {
     const timestamp = new Date().toISOString();
     const payload = JSON.stringify({ data, previousHash, timestamp });
     return crypto.createHash('sha256').update(payload).digest('hex');
   }
 
-  // Generate transaction hash for vote confirmation
   generateTransactionHash(userId, candidateId, timestamp) {
     const data = `${userId}:${candidateId}:${timestamp}`;
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 
-  // Generate secure random token
   generateSecureToken(length = 32) {
     return crypto.randomBytes(length).toString('hex');
   }
 
-  // Hash sensitive data
   hashData(data) {
     return crypto.createHash('sha256').update(data).digest('hex');
   }

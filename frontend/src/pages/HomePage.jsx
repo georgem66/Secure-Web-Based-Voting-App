@@ -66,7 +66,7 @@ const HomePage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Welcome Section */}
+      {}
       <Box sx={{ mb: 4 }}>
         <Paper elevation={3} sx={{ p: 4, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
           <Box display="flex" alignItems="center" mb={2}>
@@ -123,7 +123,7 @@ const HomePage = () => {
         </Paper>
       </Box>
 
-      {/* Voting Status Alert */}
+      {}
       {user?.hasVoted ? (
         <Alert severity="success" sx={{ mb: 3 }}>
           <Typography variant="body1">
@@ -138,7 +138,7 @@ const HomePage = () => {
         </Alert>
       )}
 
-      {/* Quick Actions */}
+      {}
       <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4, mb: 2 }}>
         Quick Actions
       </Typography>
@@ -190,7 +190,7 @@ const HomePage = () => {
         ))}
       </Grid>
 
-      {/* Security Features */}
+      {}
       <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4, mb: 2 }}>
         Security Features
       </Typography>
@@ -223,7 +223,7 @@ const HomePage = () => {
         ))}
       </Grid>
 
-      {/* Footer Info */}
+      {}
       <Box sx={{ mt: 6, p: 3, textAlign: 'center', bgcolor: 'grey.50', borderRadius: 2 }}>
         <Typography variant="body2" color="text.secondary">
           This platform uses advanced cryptographic security measures including AES-256 encryption,

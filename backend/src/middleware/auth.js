@@ -17,8 +17,7 @@ export const authenticate = async (req, res, next) => {
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
     
     const decoded = jwt.verify(token, config.JWT_SECRET);
-    
-    // Check if user still exists and is active
+
     const user = await database.query(
       'SELECT id, email, first_name, last_name, role, is_verified, is_active, last_login FROM users WHERE id = $1',
       [decoded.userId]
@@ -53,7 +52,6 @@ export const authenticate = async (req, res, next) => {
       });
     }
 
-    // Add user data to request
     req.user = {
       id: userData.id,
       email: userData.email,
@@ -118,7 +116,6 @@ export const authorize = (roles = []) => {
   };
 };
 
-// Middleware to check if user has already voted
 export const checkVotingEligibility = async (req, res, next) => {
   try {
     const vote = await database.query(

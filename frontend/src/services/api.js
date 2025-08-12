@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Create axios instance with default config
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
@@ -12,7 +11,6 @@ const api = axios.create({
   withCredentials: true, // Include cookies for session management
 });
 
-// Add request interceptor to include auth token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
@@ -20,7 +18,6 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // Add CSRF token if available
     const csrfToken = localStorage.getItem('csrfToken');
     if (csrfToken) {
       config.headers['X-CSRF-Token'] = csrfToken;
@@ -33,7 +30,6 @@ api.interceptors.request.use(
   }
 );
 
-// Add response interceptor to handle token refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -52,12 +48,11 @@ api.interceptors.response.use(
           const { accessToken } = response.data.data;
           localStorage.setItem('accessToken', accessToken);
 
-          // Retry the original request with new token
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return api(originalRequest);
         }
       } catch (refreshError) {
-        // Refresh failed, redirect to login
+
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('csrfToken');
@@ -72,7 +67,6 @@ api.interceptors.response.use(
   }
 );
 
-// API endpoints
 export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
@@ -105,10 +99,9 @@ export const adminAPI = {
   getDetailedResults: () => api.get('/admin/results/detailed'),
 };
 
-// Error handling utility
 export const handleAPIError = (error) => {
   if (error.response) {
-    // Server responded with error status
+
     const { status, data } = error.response;
     return {
       message: data.message || 'An error occurred',
@@ -116,13 +109,13 @@ export const handleAPIError = (error) => {
       errors: data.errors || [],
     };
   } else if (error.request) {
-    // Request was made but no response received
+
     return {
       message: 'Network error - please check your connection',
       status: 0,
     };
   } else {
-    // Something else happened
+
     return {
       message: error.message || 'An unexpected error occurred',
       status: -1,

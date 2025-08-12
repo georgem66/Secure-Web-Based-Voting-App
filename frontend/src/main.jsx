@@ -10,7 +10,6 @@ import App from './App';
 import theme from './theme';
 import { AuthProvider } from './context/AuthContext';
 
-// Create a client for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

@@ -30,7 +30,6 @@ import * as yup from 'yup';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Validation schema
 const schema = yup.object({
   firstName: yup.string().required('First name is required').min(1).max(50),
   lastName: yup.string().required('Last name is required').min(1).max(50),
@@ -85,7 +84,6 @@ const RegisterPage = () => {
     }
   };
 
-  // Password strength indicators
   const passwordCriteria = [
     { text: 'At least 8 characters', met: password.length >= 8 },
     { text: 'Contains uppercase letter', met: /[A-Z]/.test(password) },
@@ -241,7 +239,7 @@ const RegisterPage = () => {
               }}
             />
 
-            {/* Password strength indicator */}
+            {}
             {password && (
               <Box sx={{ mt: 1, mb: 2 }}>
                 <Typography variant="caption" color="text.secondary" gutterBottom>

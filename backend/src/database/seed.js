@@ -8,7 +8,6 @@ async function seedDatabase() {
   try {
     logger.info('Starting database seeding...');
 
-    // Create admin user
     const adminPassword = 'SecureAdmin123!';
     const hashedPassword = await bcrypt.hash(adminPassword, config.BCRYPT_ROUNDS);
 
@@ -34,7 +33,6 @@ async function seedDatabase() {
       logger.info('Admin user already exists');
     }
 
-    // Create test voters
     const testVoters = [
       { email: 'voter1@test.com', firstName: 'Alice', lastName: 'Johnson' },
       { email: 'voter2@test.com', firstName: 'Bob', lastName: 'Smith' },
@@ -72,7 +70,6 @@ async function seedDatabase() {
       }
     }
 
-    // Create election
     const electionResult = await database.query(
       `INSERT INTO elections (title, description, start_date, end_date, is_active)
        VALUES ($1, $2, $3, $4, $5)
@@ -93,7 +90,6 @@ async function seedDatabase() {
       logger.info('Election already exists');
     }
 
-    // Create candidates
     const candidates = [
       {
         name: 'Sarah Mitchell',
@@ -153,7 +149,6 @@ async function seedDatabase() {
 
     logger.info('Database seeding completed successfully');
 
-    // Log credentials for testing
     console.log('\n=== TEST CREDENTIALS ===');
     console.log('Admin Login:');
     console.log(`  Email: ${config.ADMIN_EMAIL}`);
@@ -169,7 +164,6 @@ async function seedDatabase() {
   }
 }
 
-// Run seeding if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   seedDatabase()
     .then(() => {

@@ -13,7 +13,14 @@ class Database {
       connectionTimeoutMillis: 2000,
     });
 
-    // Test the connection
+    if (config.NODE_ENV === 'development') {
+      logger.debug('Database connection configuration:', {
+        url: config.DATABASE_URL.replace(/:[^:]*@/, ':***@'), // Hide password
+        ssl: config.NODE_ENV === 'production' ? true : false,
+        environment: config.NODE_ENV
+      });
+    }
+
     this.pool.on('connect', () => {
       logger.info('Database connected successfully');
     });

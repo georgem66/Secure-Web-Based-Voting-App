@@ -3,7 +3,7 @@ import { logger, securityLogger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class AdminController {
-  // Get all candidates
+
   static async getAllCandidates(req, res, next) {
     try {
       const candidates = await database.query(
@@ -39,7 +39,6 @@ export class AdminController {
     }
   }
 
-  // Create new candidate
   static async createCandidate(req, res, next) {
     try {
       const { name, party, description, imageUrl } = req.body;
@@ -53,7 +52,6 @@ export class AdminController {
 
       const candidate = result.rows[0];
 
-      // Log admin action
       await database.query(
         `INSERT INTO audit_logs (user_id, action, resource, resource_id, ip_address, user_agent, details)
          VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -105,7 +103,6 @@ export class AdminController {
     }
   }
 
-  // Get all users
   static async getAllUsers(req, res, next) {
     try {
       const { page = 1, limit = 50, search = '' } = req.query;
@@ -119,7 +116,6 @@ export class AdminController {
         params.push(`%${search}%`);
       }
 
-      // Get users with pagination
       const users = await database.query(
         `SELECT u.id, u.email, u.first_name, u.last_name, u.role, u.is_verified, u.is_active,
                 u.mfa_enabled, u.last_login, u.created_at,
@@ -132,7 +128,6 @@ export class AdminController {
         [...params, limit, offset]
       );
 
-      // Get total count
       const totalResult = await database.query(
         `SELECT COUNT(*) as total FROM users u ${whereClause}`,
         params
@@ -169,7 +164,6 @@ export class AdminController {
     }
   }
 
-  // Get audit logs
   static async getAuditLogs(req, res, next) {
     try {
       const { page = 1, limit = 100, action = '', userId = '' } = req.query;
@@ -200,7 +194,6 @@ export class AdminController {
         [...params, limit, offset]
       );
 
-      // Get total count
       const totalResult = await database.query(
         `SELECT COUNT(*) as total FROM audit_logs a ${whereClause}`,
         params
@@ -237,10 +230,9 @@ export class AdminController {
     }
   }
 
-  // Get detailed voting results for admin
   static async getDetailedResults(req, res, next) {
     try {
-      // Get detailed results with vote timestamps and blockchain info
+
       const results = await database.query(
         `SELECT c.id, c.name, c.party, c.description,
                 COUNT(v.id) as vote_count,
@@ -256,7 +248,6 @@ export class AdminController {
         []
       );
 
-      // Get voting timeline (votes per hour)
       const timeline = await database.query(
         `SELECT DATE_TRUNC('hour', timestamp) as hour,
                 COUNT(*) as votes
@@ -266,7 +257,6 @@ export class AdminController {
         []
       );
 
-      // Get blockchain integrity status
       const blockchainStatus = await database.query(
         `SELECT COUNT(*) as total_blocks,
                 MIN(block_index) as first_block,
@@ -276,7 +266,6 @@ export class AdminController {
         []
       );
 
-      // Get system stats
       const systemStats = await database.query(
         `SELECT 
            (SELECT COUNT(*) FROM users WHERE is_verified = true AND is_active = true) as total_verified_users,

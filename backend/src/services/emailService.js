@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import { config } from '../config/config.js';
 import { logger } from '../utils/logger.js';
 
-// Create transporter for sending emails
 let transporter = null;
 
 try {

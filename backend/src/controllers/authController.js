@@ -10,12 +10,11 @@ import { logger, securityLogger } from '../utils/logger.js';
 import { sendVerificationEmail, sendOTPEmail } from '../services/emailService.js';
 
 export class AuthController {
-  // Register new user
+
   static async register(req, res, next) {
     try {
       const { email, password, firstName, lastName } = req.body;
 
-      // Check if user already exists
       const existingUser = await database.query(
         'SELECT id FROM users WHERE email = $1',
         [email.toLowerCase()]
@@ -28,14 +27,11 @@ export class AuthController {
         });
       }
 
-      // Hash password with bcrypt
       const passwordHash = await bcrypt.hash(password, config.BCRYPT_ROUNDS);
-      
-      // Generate verification token
+
       const verificationToken = encryptionService.generateSecureToken();
       const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-      // Create user
       const result = await database.query(
         `INSERT INTO users (email, password_hash, first_name, last_name, verification_token, verification_expires)
          VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, email, first_name, last_name`,
@@ -44,15 +40,13 @@ export class AuthController {
 
       const user = result.rows[0];
 
-      // Send verification email
       try {
         await sendVerificationEmail(user.email, verificationToken);
       } catch (emailError) {
         logger.error('Failed to send verification email:', emailError);
-        // Continue with registration even if email fails
+
       }
 
-      // Log security event
       securityLogger.info('User registration', {
         userId: user.id,
         email: user.email,
@@ -78,7 +72,6 @@ export class AuthController {
     }
   }
 
-  // Verify email
   static async verifyEmail(req, res, next) {
     try {
       const { token } = req.params;
@@ -116,12 +109,10 @@ export class AuthController {
     }
   }
 
-  // Login
   static async login(req, res, next) {
     try {
       const { email, password, totpCode } = req.body;
 
-      // Get user with password
       const userResult = await database.query(
         `SELECT id, email, password_hash, first_name, last_name, role, is_verified, 
                 is_active, mfa_enabled, mfa_secret, failed_login_attempts, locked_until
@@ -144,7 +135,6 @@ export class AuthController {
 
       const user = userResult.rows[0];
 
-      // Check if account is locked
       if (user.locked_until && new Date() < user.locked_until) {
         securityLogger.warn('Login attempt on locked account', {
           userId: user.id,
@@ -159,11 +149,10 @@ export class AuthController {
         });
       }
 
-      // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password_hash);
       
       if (!isValidPassword) {
-        // Increment failed login attempts
+
         const attempts = user.failed_login_attempts + 1;
         const locked_until = attempts >= config.MAX_LOGIN_ATTEMPTS 
           ? new Date(Date.now() + config.LOCKOUT_TIME) 
@@ -188,7 +177,6 @@ export class AuthController {
         });
       }
 
-      // Check if account is verified
       if (!user.is_verified) {
         return res.status(401).json({
           success: false,
@@ -196,7 +184,6 @@ export class AuthController {
         });
       }
 
-      // Check if account is active
       if (!user.is_active) {
         return res.status(401).json({
           success: false,
@@ -204,7 +191,6 @@ export class AuthController {
         });
       }
 
-      // Check MFA if enabled
       if (user.mfa_enabled) {
         if (!totpCode) {
           return res.status(200).json({
@@ -235,13 +221,11 @@ export class AuthController {
         }
       }
 
-      // Reset failed login attempts
       await database.query(
         'UPDATE users SET failed_login_attempts = 0, locked_until = null, last_login = NOW() WHERE id = $1',
         [user.id]
       );
 
-      // Generate JWT tokens
       const accessToken = jwt.sign(
         { userId: user.id, email: user.email, role: user.role },
         config.JWT_SECRET,
@@ -254,7 +238,6 @@ export class AuthController {
         { expiresIn: config.REFRESH_TOKEN_EXPIRES_IN }
       );
 
-      // Store session
       const sessionToken = encryptionService.generateSecureToken();
       const csrfToken = encryptionService.generateSecureToken();
       
@@ -299,21 +282,17 @@ export class AuthController {
     }
   }
 
-  // Setup MFA
   static async setupMFA(req, res, next) {
     try {
       const userId = req.user.id;
-      
-      // Generate secret
+
       const secret = speakeasy.generateSecret({
         name: `Secure Voting (${req.user.email})`,
         issuer: 'Secure Voting App'
       });
 
-      // Generate QR code
       const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url);
 
-      // Store secret temporarily (will be confirmed when user verifies)
       await database.query(
         'UPDATE users SET mfa_secret = $1 WHERE id = $2',
         [secret.base32, userId]
@@ -332,7 +311,6 @@ export class AuthController {
     }
   }
 
-  // Verify and enable MFA
   static async verifyMFA(req, res, next) {
     try {
       const { totpCode } = req.body;
@@ -364,7 +342,6 @@ export class AuthController {
         });
       }
 
-      // Enable MFA
       await database.query(
         'UPDATE users SET mfa_enabled = true WHERE id = $1',
         [userId]
@@ -385,13 +362,11 @@ export class AuthController {
     }
   }
 
-  // Disable MFA
   static async disableMFA(req, res, next) {
     try {
       const { password } = req.body;
       const userId = req.user.id;
 
-      // Verify password
       const user = await database.query(
         'SELECT password_hash FROM users WHERE id = $1',
         [userId]
@@ -406,7 +381,6 @@ export class AuthController {
         });
       }
 
-      // Disable MFA
       await database.query(
         'UPDATE users SET mfa_enabled = false, mfa_secret = null WHERE id = $1',
         [userId]
@@ -427,12 +401,10 @@ export class AuthController {
     }
   }
 
-  // Logout
   static async logout(req, res, next) {
     try {
       const userId = req.user.id;
-      
-      // Invalidate all sessions for this user
+
       await database.query(
         'DELETE FROM user_sessions WHERE user_id = $1',
         [userId]
@@ -453,7 +425,6 @@ export class AuthController {
     }
   }
 
-  // Refresh token
   static async refreshToken(req, res, next) {
     try {
       const { refreshToken } = req.body;
@@ -474,7 +445,6 @@ export class AuthController {
         });
       }
 
-      // Get user
       const user = await database.query(
         'SELECT id, email, role FROM users WHERE id = $1 AND is_active = true',
         [decoded.userId]
@@ -489,7 +459,6 @@ export class AuthController {
 
       const userData = user.rows[0];
 
-      // Generate new access token
       const accessToken = jwt.sign(
         { userId: userData.id, email: userData.email, role: userData.role },
         config.JWT_SECRET,
@@ -513,7 +482,6 @@ export class AuthController {
     }
   }
 
-  // Get current user profile
   static async getProfile(req, res, next) {
     try {
       const user = await database.query(
@@ -532,7 +500,6 @@ export class AuthController {
 
       const userData = user.rows[0];
 
-      // Check if user has voted
       const voteResult = await database.query(
         'SELECT id FROM votes WHERE user_id = $1',
         [req.user.id]

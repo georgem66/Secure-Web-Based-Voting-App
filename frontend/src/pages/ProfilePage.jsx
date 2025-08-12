@@ -54,7 +54,6 @@ const ProfilePage = () => {
   const [activityDialogOpen, setActivityDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Form validation schema
   const schema = yup.object({
     firstName: yup.string().required('First name is required'),
     lastName: yup.string().required('Last name is required'),
@@ -107,7 +106,7 @@ const ProfilePage = () => {
       const response = await api.post('/auth/enable-mfa');
       if (response.data.success) {
         toast.success('MFA setup initiated');
-        // Handle MFA setup flow
+
         setMfaDialogOpen(true);
       }
     } catch (error) {
@@ -161,7 +160,7 @@ const ProfilePage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Header */}
+      {}
       <Paper elevation={3} sx={{ p: 4, mb: 4, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
         <Box display="flex" alignItems="center" mb={2}>
           <Avatar
@@ -212,7 +211,7 @@ const ProfilePage = () => {
       </Paper>
 
       <Grid container spacing={4}>
-        {/* Personal Information */}
+        {}
         <Grid item xs={12} md={8}>
           <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
@@ -313,7 +312,7 @@ const ProfilePage = () => {
             )}
           </Paper>
 
-          {/* Account Activity */}
+          {}
           <Paper elevation={3} sx={{ p: 3 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
               <Typography variant="h6">
@@ -356,7 +355,7 @@ const ProfilePage = () => {
           </Paper>
         </Grid>
 
-        {/* Security Settings */}
+        {}
         <Grid item xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
@@ -395,7 +394,7 @@ const ProfilePage = () => {
             ))}
           </Paper>
 
-          {/* Security Actions */}
+          {}
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               Security Settings
@@ -444,7 +443,7 @@ const ProfilePage = () => {
         </Grid>
       </Grid>
 
-      {/* MFA Setup Dialog */}
+      {}
       <Dialog open={mfaDialogOpen} onClose={() => setMfaDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Set Up Two-Factor Authentication</DialogTitle>
         <DialogContent>
@@ -461,7 +460,7 @@ const ProfilePage = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Activity History Dialog */}
+      {}
       <Dialog 
         open={activityDialogOpen} 
         onClose={() => setActivityDialogOpen(false)} 

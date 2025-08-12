@@ -61,20 +61,17 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
-  
-  // State for different data
+
   const [candidates, setCandidates] = useState([]);
   const [users, setUsers] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [statistics, setStatistics] = useState({});
-  
-  // Dialog states
+
   const [candidateDialogOpen, setCandidateDialogOpen] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState(null);
   const [userDetailsDialogOpen, setUserDetailsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Form validation
   const candidateSchema = yup.object({
     name: yup.string().required('Name is required'),
     party: yup.string().required('Party is required'),
@@ -246,7 +243,7 @@ const AdminDashboard = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      {/* Header */}
+      {}
       <Paper elevation={3} sx={{ p: 4, mb: 4, bgcolor: 'error.main', color: 'white' }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap">
           <Box display="flex" alignItems="center">
@@ -272,7 +269,7 @@ const AdminDashboard = () => {
         </Box>
       </Paper>
 
-      {/* Statistics Cards */}
+      {}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard 
@@ -308,7 +305,7 @@ const AdminDashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Admin Tabs */}
+      {}
       <Paper elevation={3} sx={{ mb: 2 }}>
         <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth">
           <Tab label="Candidates" />
@@ -318,7 +315,7 @@ const AdminDashboard = () => {
         </Tabs>
       </Paper>
 
-      {/* Tab Content */}
+      {}
       {activeTab === 0 && (
         <Paper elevation={3} sx={{ p: 3 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -550,7 +547,7 @@ const AdminDashboard = () => {
         </Paper>
       )}
 
-      {/* Candidate Dialog */}
+      {}
       <Dialog open={candidateDialogOpen} onClose={() => setCandidateDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
           {editingCandidate ? 'Edit Candidate' : 'Add New Candidate'}
@@ -597,7 +594,7 @@ const AdminDashboard = () => {
         </DialogActions>
       </Dialog>
 
-      {/* User Details Dialog */}
+      {}
       <Dialog open={userDetailsDialogOpen} onClose={() => setUserDetailsDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>User Details</DialogTitle>
         <DialogContent>

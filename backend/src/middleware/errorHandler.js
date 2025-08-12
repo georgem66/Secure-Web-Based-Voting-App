@@ -1,7 +1,7 @@
 import { logger, securityLogger } from '../utils/logger.js';
 
 export const errorHandler = (err, req, res, next) => {
-  // Log the error
+
   logger.error('Error occurred:', {
     error: err.message,
     stack: err.stack,
@@ -12,7 +12,6 @@ export const errorHandler = (err, req, res, next) => {
     timestamp: new Date().toISOString(),
   });
 
-  // Log security-related errors
   if (err.name === 'UnauthorizedError' || err.status === 401 || err.status === 403) {
     securityLogger.warn('Security violation detected:', {
       error: err.message,
@@ -25,7 +24,6 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Handle different types of errors
   let status = 500;
   let message = 'Internal server error';
 
@@ -52,7 +50,6 @@ export const errorHandler = (err, req, res, next) => {
     message = 'Invalid reference';
   }
 
-  // Don't leak error details in production
   if (process.env.NODE_ENV === 'production') {
     res.status(status).json({
       success: false,

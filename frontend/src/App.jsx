@@ -6,7 +6,6 @@ import { useAuth } from './context/AuthContext';
 import LoadingScreen from './components/LoadingScreen';
 import Layout from './components/Layout';
 
-// Pages
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -16,7 +15,6 @@ import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 
-// Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { isAuthenticated, user, isLoading } = useAuth();
 
@@ -35,7 +33,6 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   return children;
 };
 
-// Public Route Component (redirect if authenticated)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
@@ -60,7 +57,7 @@ function App() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Routes>
-        {/* Public routes */}
+        {}
         <Route 
           path="/login" 
           element={
@@ -79,7 +76,7 @@ function App() {
         />
         <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
 
-        {/* Protected routes with layout */}
+        {}
         <Route 
           path="/" 
           element={
@@ -131,7 +128,7 @@ function App() {
           } 
         />
 
-        {/* Catch all - redirect to home */}
+        {}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Box>

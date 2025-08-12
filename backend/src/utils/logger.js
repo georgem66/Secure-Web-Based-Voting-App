@@ -32,7 +32,6 @@ export const logger = winston.createLogger({
   ],
 });
 
-// Security-specific logger for audit trails
 export const securityLogger = winston.createLogger({
   level: 'info',
   format: logFormat,
@@ -46,7 +45,6 @@ export const securityLogger = winston.createLogger({
   ],
 });
 
-// Create logs directory if it doesn't exist
 import fs from 'fs';
 if (!fs.existsSync('logs')) {
   fs.mkdirSync('logs');

@@ -57,7 +57,7 @@ const VotingPage = () => {
   const steps = ['Select Candidate', 'Confirm Vote', 'Vote Cast'];
 
   useEffect(() => {
-    // Check if user has already voted
+
     if (user?.hasVoted) {
       setVoteComplete(true);
       setActiveStep(2);
@@ -96,9 +96,7 @@ const VotingPage = () => {
         setActiveStep(2);
         toast.success('Vote cast successfully!');
         setConfirmDialogOpen(false);
-        
-        // Update user context to reflect that they've voted
-        // This would typically be handled by refreshing the auth context
+
         window.location.reload();
       }
     } catch (error) {
@@ -185,7 +183,7 @@ const VotingPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Header */}
+      {}
       <Paper elevation={3} sx={{ p: 3, mb: 4, bgcolor: 'primary.main', color: 'white' }}>
         <Box display="flex" alignItems="center" mb={2}>
           <HowToVote sx={{ fontSize: 40, mr: 2 }} />
@@ -199,7 +197,7 @@ const VotingPage = () => {
           </Box>
         </Box>
 
-        {/* Security Indicators */}
+        {}
         <Box display="flex" gap={1} flexWrap="wrap" mt={2}>
           <Chip 
             icon={<Lock />} 
@@ -222,7 +220,7 @@ const VotingPage = () => {
         </Box>
       </Paper>
 
-      {/* Progress Stepper */}
+      {}
       <Box sx={{ mb: 4 }}>
         <Stepper activeStep={activeStep}>
           {steps.map((label) => (
@@ -233,7 +231,7 @@ const VotingPage = () => {
         </Stepper>
       </Box>
 
-      {/* Instructions */}
+      {}
       <Alert severity="info" sx={{ mb: 3 }}>
         <Typography variant="body2">
           <strong>Important:</strong> You can only vote once. Your vote will be encrypted and permanently recorded 
@@ -241,7 +239,7 @@ const VotingPage = () => {
         </Typography>
       </Alert>
 
-      {/* Candidate Selection */}
+      {}
       <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
         Select Your Candidate
       </Typography>
@@ -304,7 +302,7 @@ const VotingPage = () => {
         </RadioGroup>
       </FormControl>
 
-      {/* Action Buttons */}
+      {}
       {selectedCandidate && (
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
           <Button
@@ -328,7 +326,7 @@ const VotingPage = () => {
         </Box>
       )}
 
-      {/* Confirmation Dialog */}
+      {}
       <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
           <Box display="flex" alignItems="center">

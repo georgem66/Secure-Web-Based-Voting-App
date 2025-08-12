@@ -67,7 +67,6 @@ const Layout = ({ children }) => {
     { text: 'Profile', icon: <AccountBox />, path: '/profile' },
   ];
 
-  // Add admin menu item if user is admin
   if (user?.role === 'admin') {
     menuItems.push({
       text: 'Admin Dashboard',
@@ -183,7 +182,7 @@ const Layout = ({ children }) => {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile drawer */}
+      {}
       {isMobile && (
         <Drawer
           variant="temporary"
@@ -198,7 +197,7 @@ const Layout = ({ children }) => {
         </Drawer>
       )}
 
-      {/* Desktop drawer */}
+      {}
       {!isMobile && (
         <Drawer
           variant="permanent"
@@ -216,7 +215,7 @@ const Layout = ({ children }) => {
         </Drawer>
       )}
 
-      {/* User menu */}
+      {}
       <Menu
         id="user-menu"
         anchorEl={anchorEl}
@@ -234,7 +233,7 @@ const Layout = ({ children }) => {
         </MenuItem>
       </Menu>
 
-      {/* Main content */}
+      {}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {children}
